@@ -7,20 +7,18 @@ int SPEED = 0;
 int pos = -1;
 %}
 
-WORD [^" ""?"\.,:\n\t0-9]+
-NUMBER [^" ""?"\.«»",":\n\t]+
-LINK "http"[^ ]+
-POINT [!\?",":]
+WORD [^ \n\t!\?,:\.0-9]+
+NUMBER [^ \n\t!\?,:\.]+
+POINT [!\?,:]+
 
 %%
 
-{WORD}				display(yytext, 0);
-{NUMBER}			display(yytext, .1);
-({WORD}|{NUMBER})" "?\."”"?	display(yytext, 1);
-({WORD}|{NUMBER})" "?{POINT} 	display(yytext, .7);
+({WORD}|{NUMBER})" "?\.{WORD}?		display(yytext, 1); 
+({WORD}|{NUMBER})" "?{POINT}{WORD}?	display(yytext, .85); 
+{WORD}					display(yytext, 0);
+{NUMBER}				display(yytext, .2);
 [ \t\n]+
-{LINK}
-. 				display(yytext, 0);
+. 					display(yytext, 0);
 
 %%
 

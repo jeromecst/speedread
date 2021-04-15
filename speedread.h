@@ -7,7 +7,7 @@
 #include <signal.h>
 #include "utf8.h"
 
-#define SIZE 50
+#define SIZE 100
 
 struct Word {
 	char w[SIZE];
@@ -22,8 +22,8 @@ void add_str(char *s, unsigned n, unsigned add);
 unsigned size_bytes(char *s);
 unsigned display_word(char *s, unsigned *midword);
 void clear_lines(unsigned a);
-void display_cursor(unsigned *a);
-void display_tab(unsigned *mid_screen);
+void display_cursor();
+void display_tab();
 void get_mid_screen();
-void display(char *s, unsigned add);
+void display(char *s, double add);
 void sig_handler(int signum);
