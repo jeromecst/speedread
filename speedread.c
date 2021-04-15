@@ -86,14 +86,25 @@ void clear_lines(unsigned a){
 		printf("\033[1A\033[1000D\033[K");
 }
 
-void display_cursor(unsigned *a){
-	for(int i = 0; i < *a; i++) printf(" ");
+void display_cursor(){
+	get_mid_screen();
+	for(int i = 0; i < mid_screen; i++) printf(" ");
 	printf("\033[1;32mv\033[0m\n");
 }
 
-void display_tab(unsigned *mid_screen){
+void display_tab(){
+	get_mid_screen();
 	unsigned midword = tab[1]->size > 13 ? 4 : mid[tab[1]->size];
-	for(int i = 0; i < *mid_screen - tab[0]->size - midword - 1; i++) printf(" ");
+	int lim = mid_screen - tab[0]->size - midword - 1;
+	printf("\033[s");
+	if(lim < 0){
+		while(lim < 0){
+			get_mid_screen();
+			lim = mid_screen - tab[0]->size - midword - 1;
+		}
+		printf("\033[u");
+	}
+	for(int k = 0; k < lim; k++) printf(" ");
 	for(int i = 0; i < 3; i++){
 		if(i == 1) display_word(tab[i]->w, &midword);
 		else printf("\033[1;30m%s\033[0m ", tab[i]->w);
@@ -106,18 +117,18 @@ void get_mid_screen(){
 	mid_screen = w.ws_col/2;
 }
 
-void display(char *s, unsigned add){
+void display(char *s, double add){
 	count ++;
-	unsigned n  = u8_strlen(s);
+	unsigned n = u8_strlen(s);
 	add_str(s, n, add*SPEED);
 	if(pos > -1 && count < pos) return;
+	//printf(", len(%s) = %u, num(%d)",s, n, s[1]); 
 	clear_lines(2);
-	get_mid_screen();
-	display_cursor(&mid_screen);
-	display_tab(&mid_screen);
+	display_cursor();
+	display_tab();
 	float n2 = ((float)n)/10 > 1 ? ((float)n)/10 : 1;
 	msleep((long)(SPEED*n2 + tab[1]->time));
-	printf("\033[KWPM = %d", WPM);
+	printf("\033[KWPM = %d, WORDS: %d", WPM, count);
 }
 
 void sig_handler(int signum){
