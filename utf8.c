@@ -474,3 +474,27 @@ int u8_printf(char *fmt, ...)
     va_end(args);
     return cnt;
 }
+
+void strcopy(char *a, char *b){
+	int i ;
+	for(i = 0 ; a[i] != '\0'; i++){
+		b[i] = a[i];
+	}
+	b[i] = '\0';
+}
+
+const unsigned long hash(const char *str) {
+    unsigned long hash = 5381;
+    int c;
+
+    while ((c = *str++))
+        hash = ((hash << 5) + hash) + c;
+    return hash;
+}
+
+unsigned len(char *s){
+	unsigned n;
+	for(n = 0; s[n] != '\0'; n++) ;
+	return n;
+}
+
