@@ -2,9 +2,11 @@
 
 %{
 #include "speedread.h"
-int WPM = 350;
+#include <signal.h>
+int WPM = 450;
 int SPEED = 0;
 int pos = -1;
+char color[] = "\033[1;32m";
 %}
 
 WORD [^ \n\t!\?,:\.0-9]+
@@ -24,6 +26,7 @@ POINT [!\?,:]+
 
 int main(int argc, char *argv[])
 {
+	//printf("%lu\n\n", hash("white"));
 	signal(SIGINT, sig_handler);
 	printf("\n");
 	int opt;
@@ -34,6 +37,9 @@ int main(int argc, char *argv[])
 				break;
 			case 'p':
 				pos = atoi(optarg);
+				break;
+			case 'c':
+				switch_colors(optarg, color);
 				break;
 			default: /* '?' */
 				fprintf(stderr, "Usage: %s [-w wpm] [-c color] [-n num] [-p pos] name\n",

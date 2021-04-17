@@ -1,3 +1,10 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <time.h>
+#include <signal.h>
 #include "speedread.h"
 
 unsigned mid[] = {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3};
@@ -7,6 +14,7 @@ struct winsize w;
 extern int WPM;
 extern long SPEED;
 extern int pos;
+extern char color[];
 int count = 0;
 
 int msleep(unsigned long msec) {
@@ -23,19 +31,11 @@ int msleep(unsigned long msec) {
 	return res;
 }
 
-void copy_char(char *a, char *b){
-	int i;
-	for(i = 0; b[i] != '\0'; i++){
-		a[i] = b[i];
-	}
-	a[i] = '\0';
-}
-
 void add_str(char *s, unsigned n, unsigned add){
 	char stmp[SIZE];
 	char stmp2[SIZE];
-	copy_char(stmp, tab[2]->w);
-	copy_char(stmp2, s);
+	strcopy(tab[2]->w,stmp);
+	strcopy(s, stmp2);
 
 	int tmpsize = tab[2]->size;
 	int tmpsize2 = n;
@@ -43,9 +43,9 @@ void add_str(char *s, unsigned n, unsigned add){
 	int tmptime = tab[2]->time;
 	int tmptime2 = add;
 	for(int i = 2; i >= 0; i--){
-		copy_char(stmp, tab[i]->w);
-		copy_char(tab[i]->w, stmp2);
-		copy_char(stmp2, stmp);
+		strcopy(tab[i]->w, stmp);
+		strcopy(stmp2, tab[i]->w);
+		strcopy(stmp, stmp2);
 		 
 		tmpsize = tab[i]->size;
 		tab[i]->size = tmpsize2;
@@ -57,13 +57,7 @@ void add_str(char *s, unsigned n, unsigned add){
 	}
 }
 
-unsigned len(char *s){
-	unsigned n;
-	for(n = 0; s[n] != '\0'; n++) ;
-	return n;
-}
-
-unsigned display_word(char *s, unsigned *midword){
+void display_word(char *s, unsigned *midword){
 	int a;
 	int size = 0;
 	char str[4];
@@ -74,7 +68,7 @@ unsigned display_word(char *s, unsigned *midword){
 			else str[k] = '\0';
 		}
 		if(size != *midword) printf("\033[1m%s\033[0m", str);
-		else printf("\033[32;1m%s\033[0m", str);
+		else printf("%s%s\033[0m", color, str);
 		i += a;
 		size++;
 	}
@@ -89,7 +83,7 @@ void clear_lines(unsigned a){
 void display_cursor(){
 	get_mid_screen();
 	for(int i = 0; i < mid_screen; i++) printf(" ");
-	printf("\033[1;32mv\033[0m\n");
+	printf("%sv\033[0m\n", color);
 }
 
 void display_tab(){
@@ -135,3 +129,33 @@ void sig_handler(int signum){
 	printf("\nRestore with speedread -p %d\n", count);
 	exit(0);
 }
+
+void switch_colors(char *c, char *col){
+	switch (hash(c)){
+		case(210707760194): strcopy("\033[0;30m", col); break; // black
+		case(6385084301): strcopy("\033[0;34m", col); break; // blue
+		case(210713909846): strcopy("\033[0;32m", col); break; // green
+		case(6385133744): strcopy("\033[0;36m", col); break; // cyan
+		case(193504576): strcopy("\033[0;31m", col); break; // red
+		case(6953915280413): strcopy("\033[0;35m", col); break; // purple
+		case(210707991725): strcopy("\033[0;33m", col); break; // brown
+		case(6385269880): strcopy("\033[0;37m", col); break; // gray
+		case(6954248304353): strcopy("\033[1;33m", col); break; // yellow
+		case(210732530054): strcopy("\033[1;37m", col); break; // white
+		default: 
+				    printf("Unrecognized color\n");
+				    printf("Availaibled are\n");
+				    printf("- black\n \
+						    - blue\n \
+						    - gree\n \
+						    - cyan \n \
+						    - red\n \
+						    - purple\n \
+						    - brown \n \
+						    - gray\n \
+						    - yellow\n \
+						    - white\n");
+				    exit(1);
+	}
+}
+

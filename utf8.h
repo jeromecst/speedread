@@ -69,3 +69,7 @@ int u8_is_locale_utf8(char *locale);
    locale is UTF-8. */
 int u8_vprintf(char *fmt, va_list ap);
 int u8_printf(char *fmt, ...);
+
+void strcopy(char *a, char *b);
+const unsigned long hash(const char *str);
+unsigned len(char *s);
