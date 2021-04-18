@@ -132,14 +132,14 @@ void sig_handler(int signum){
 
 void switch_colors(char *c, char *col){
 	switch (hash(c)){
-		case(210707760194): strcopy("\033[0;30m", col); break; // black
-		case(6385084301): strcopy("\033[0;34m", col); break; // blue
-		case(210713909846): strcopy("\033[0;32m", col); break; // green
-		case(6385133744): strcopy("\033[0;36m", col); break; // cyan
-		case(193504576): strcopy("\033[0;31m", col); break; // red
-		case(6953915280413): strcopy("\033[0;35m", col); break; // purple
-		case(210707991725): strcopy("\033[0;33m", col); break; // brown
-		case(6385269880): strcopy("\033[0;37m", col); break; // gray
+		case(210707760194): strcopy("\033[1;30m", col); break; // black
+		case(6385084301): strcopy("\033[1;34m", col); break; // blue
+		case(210713909846): strcopy("\033[1;32m", col); break; // green
+		case(6385133744): strcopy("\033[1;36m", col); break; // cyan
+		case(193504576): strcopy("\033[1;31m", col); break; // red
+		case(6953915280413): strcopy("\033[1;35m", col); break; // purple
+		case(210707991725): strcopy("\033[1;33m", col); break; // brown
+		case(6385269880): strcopy("\033[1;37m", col); break; // gray
 		case(6954248304353): strcopy("\033[1;33m", col); break; // yellow
 		case(210732530054): strcopy("\033[1;37m", col); break; // white
 		default: 

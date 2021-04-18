@@ -3,7 +3,7 @@
 %{
 #include "speedread.h"
 #include <signal.h>
-int WPM = 450;
+int WPM = 350;
 int SPEED = 0;
 int pos = -1;
 char color[] = "\033[1;32m";
