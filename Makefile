@@ -1,4 +1,4 @@
-all:
+all: 
 	lex speedread.l 
 	gcc lex.yy.c utf8.c speedread.c -o speedread
 
