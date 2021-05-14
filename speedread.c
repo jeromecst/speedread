@@ -7,6 +7,8 @@
 #include <signal.h>
 #include "speedread.h"
 
+#define LISTCOLORS " - black\n - blue\n - green\n - cyan \n - red\n - purple\n - brown \n - gray\n - yellow\n - white\n"
+
 unsigned mid[] = {0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3};
 unsigned mid_screen;
 struct Word tab[3][SIZE];
@@ -145,16 +147,7 @@ void switch_colors(char *c, char *col){
 		default: 
 				    printf("Unrecognized color\n");
 				    printf("Availaibled are\n");
-				    printf("- black\n \
-						    - blue\n \
-						    - gree\n \
-						    - cyan \n \
-						    - red\n \
-						    - purple\n \
-						    - brown \n \
-						    - gray\n \
-						    - yellow\n \
-						    - white\n");
+				    printf(LISTCOLORS);
 				    exit(1);
 	}
 }

@@ -26,11 +26,9 @@ POINT [!\?,:]+
 
 int main(int argc, char *argv[])
 {
-	//printf("%lu\n\n", hash("white"));
 	signal(SIGINT, sig_handler);
-	printf("\n");
 	int opt;
-	while ((opt = getopt(argc, argv, "w:c:n:p:")) != -1) {
+	while ((opt = getopt(argc, argv, "w:c:p:h")) != -1) {
 		switch (opt) {
 			case 'w':
 				WPM = atoi(optarg);
@@ -41,9 +39,9 @@ int main(int argc, char *argv[])
 			case 'c':
 				switch_colors(optarg, color);
 				break;
-			default: /* '?' */
-				fprintf(stderr, "Usage: %s [-w wpm] [-c color] [-n num] [-p pos] name\n",
-						argv[0]);
+			case 'h':
+			default: 
+				fprintf(stderr, "Usage: %s [-w wpm] [-c color] [-n num] [-p pos] [-h] file\n", argv[0]);
 				exit(EXIT_FAILURE);
 		}
 	}
