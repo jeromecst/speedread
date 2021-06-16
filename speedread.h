@@ -18,4 +18,4 @@ void get_mid_screen();
 void display(char *s, double add);
 void sig_handler(int signum);
 const unsigned long hash(const char *str);
-void switch_colors(char *c, char *col);
+void switch_colors(char *c);

@@ -15,7 +15,7 @@ cat text.txt | speedread [-w wpm] [-c color] [-n num] [-p pos] [-h] [file]
 # BUILD
 
 **Install**
-No library needed, just type
+Now requires `ncurses`. To compile, type:
 ```
 sudo make install
 ```
