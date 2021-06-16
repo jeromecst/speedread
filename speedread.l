@@ -3,10 +3,11 @@
 %{
 #include "speedread.h"
 #include <signal.h>
+#include <ncurses.h>
+#include <locale.h>
 int WPM = 350;
 int SPEED = 0;
 int pos = -1;
-char color[] = "\033[1;32m";
 %}
 
 WORD [^ \n\t!\?,:\.0-9]+
@@ -15,6 +16,7 @@ POINT [!\?,:]+
 
 %%
 
+"..."|"[...]"				display(yytext, 1);
 ({WORD}|{NUMBER})" "?\.{WORD}?		display(yytext, 1); 
 ({WORD}|{NUMBER})" "?{POINT}{WORD}?	display(yytext, .85); 
 {WORD}					display(yytext, 0);
@@ -26,8 +28,9 @@ POINT [!\?,:]+
 
 int main(int argc, char *argv[])
 {
-	signal(SIGINT, sig_handler);
 	int opt;
+	char color[20];
+	strcopy("green", color);
 	while ((opt = getopt(argc, argv, "w:c:p:h")) != -1) {
 		switch (opt) {
 			case 'w':
@@ -37,7 +40,7 @@ int main(int argc, char *argv[])
 				pos = atoi(optarg);
 				break;
 			case 'c':
-				switch_colors(optarg, color);
+				strcopy(optarg, color);
 				break;
 			case 'h':
 			default: 
@@ -51,8 +54,23 @@ int main(int argc, char *argv[])
 		yyin = stdin;
 	else
 		yyin = fopen(argv[optind], "r");
-	yylex();
+	setlocale(LC_ALL, "");
+	initscr(); // window initialization
+	curs_set(0);
+	if (has_colors()){
+		start_color();
+		use_default_colors();
+		switch_colors(color);
+		init_pair(3, COLOR_BLACK, -1);
+		init_pair(1, -1, -1);
+	}
+	cbreak(); // one char at a time input
+	noecho(); // do not write char to terminal
+	nodelay(stdscr, TRUE); // do not wait for user input
+	keypad(stdscr, TRUE); // allow arrow keys
+	yylex(); // launch file analyze
 	display("", 0);
 	extern int count;
 	printf("\nWords read: %d\n", count);
+	endwin();
 }
