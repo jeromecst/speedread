@@ -1,6 +1,6 @@
 # USAGE
 ```
-speedread [-w wpm] [-c color] [-n num] [-p pos] [-h] [file]
+speedread [-w wpm] [-c color] [-n num] [-p pos] [-h] file
 ```
 or
 ```
