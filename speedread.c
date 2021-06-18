@@ -4,6 +4,7 @@
 #include <time.h>
 #include <ncurses.h>
 #include <signal.h>
+#include <unistd.h>
 #include "speedread.h"
 
 #define LISTCOLORS " - black\n - blue\n - green\n - cyan\n - red\n - magenta\n - yellow\n - white\n"
@@ -16,6 +17,8 @@ extern int pos;
 extern char color[];
 int count = 0;
 int offset = 3;
+int pause_ = 0;
+int skip = 0;
 
 int msleep(unsigned long msec) {
 	struct timespec ts;
@@ -110,23 +113,56 @@ void display_tab(){
 	}
 }
 
-void display(char *s, double add){
+void redraw(){
 	int h, w;
-	count ++;
-	if(pos > -1 && count < pos) return;
-	unsigned n = u8_strlen(s);
-	add_str(s, n, add*SPEED);
-	//printf(", len(%s) = %u, num(%d)",s, n, s[1]); 
 	clear();
 	display_cursor();
 	display_tab();
-	float n2 = ((float)n)/10 > 1 ? ((float)n)/10 : 1;
-	msleep((long)(SPEED*n2 + tab[1]->time));
 	getmaxyx(stdscr, h, w);
 	move(h-1,1);
 	attron(A_NORMAL);
 	printw("WPM: %d | WORDS: %d", WPM, count);
+}
+
+void manage_input(){
+	int h, w;
+	do{
+		getmaxyx(stdscr, h, w);
+		// h et l pour parcourir le tableau
+		// j et k pour changer le wpm
+		int ch;
+		ch = getch();
+		switch (ch){
+			case ' ' : pause_ = !pause_; break;
+			case 'j' : WPM = WPM > 10 ? WPM - 10 : WPM ; break;
+			case 'k' : WPM += 10; break;
+			case 'J' : offset = h/2 - offset < h - 3 ? offset - 1 : offset; break;
+			case 'K' : offset = h/2 - offset > 0 ? offset + 1 : offset ; break;
+			case 'l' : skip = 1; return;
+			default: break;
+		}
+		if(pause_){ 
+			redraw();
+			msleep(20);
+			refresh();
+		}
+	} while(pause_);
+}
+
+void display(char *s, double add){
+	count ++;
+	if(pos > -1 && count < pos) return;
+	unsigned n = u8_strlen(s);
+	add_str(s, n, add*SPEED);
+	float n2 = ((float)n)/10 > 1 ? ((float)n)/10 : 1;
+	redraw();
+	manage_input();	
 	refresh();
+	SPEED = 60000/WPM;
+	if(!skip){
+		msleep((long)(SPEED*n2 + tab[1]->time));
+	}
+	skip = 0;
 }
 
 void sig_handler(int signum){

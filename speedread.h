@@ -19,3 +19,4 @@ void display(char *s, double add);
 void sig_handler(int signum);
 const unsigned long hash(const char *str);
 void switch_colors(char *c);
+void manage_input();

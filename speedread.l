@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 {
 	int opt;
 	char color[20];
-	strcopy("green", color);
+	strcopy("green", color); //default color is green
 	while ((opt = getopt(argc, argv, "w:c:p:h")) != -1) {
 		switch (opt) {
 			case 'w':
@@ -49,14 +49,16 @@ int main(int argc, char *argv[])
 		}
 	}
 	SPEED = 60000/WPM;
-	printf("\n");
-	if (optind >= argc) 
-		yyin = stdin;
-	else
-		yyin = fopen(argv[optind], "r");
+	if (optind >= argc) {
+		// transform sdtin to a file
+		yyin = fdopen(dup(fileno(stdin)), "r");
+		// reopen stdin on the terminal (assuming stdout is still connected to the terminal)
+		freopen(ttyname(fileno(stdout)), "r", stdin);
+	}
+	else yyin = fopen(argv[optind], "r");
+	initscr(); // window initialization if a file is provided
 	setlocale(LC_ALL, "");
-	initscr(); // window initialization
-	curs_set(0);
+	curs_set(0); // hide cursor
 	if (has_colors()){
 		start_color();
 		use_default_colors();
@@ -71,6 +73,7 @@ int main(int argc, char *argv[])
 	yylex(); // launch file analyze
 	display("", 0);
 	extern int count;
-	printf("\nWords read: %d\n", count);
 	endwin();
+	printf("Words read: %d\n", count);
+	exit(0);
 }
