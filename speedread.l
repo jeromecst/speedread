@@ -56,8 +56,8 @@ int main(int argc, char *argv[])
 		freopen(ttyname(fileno(stdout)), "r", stdin);
 	}
 	else yyin = fopen(argv[optind], "r");
-	initscr(); // window initialization if a file is provided
 	setlocale(LC_ALL, "");
+	initscr(); // window initialization 
 	curs_set(0); // hide cursor
 	if (has_colors()){
 		start_color();

@@ -121,11 +121,15 @@ void redraw(){
 	getmaxyx(stdscr, h, w);
 	move(h-1,1);
 	attron(A_NORMAL);
-	printw("WPM: %d | WORDS: %d", WPM, count);
+	if(pause_)
+		printw("WPM: %d | WORDS: %d | PAUSED", WPM, count);
+	else
+		printw("WPM: %d | WORDS: %d", WPM, count);
 }
 
 void manage_input(){
 	int h, w;
+	skip = 0;
 	do{
 		getmaxyx(stdscr, h, w);
 		// h et l pour parcourir le tableau
@@ -138,15 +142,22 @@ void manage_input(){
 			case 'k' : WPM += 10; break;
 			case 'J' : offset = h/2 - offset < h - 3 ? offset - 1 : offset; break;
 			case 'K' : offset = h/2 - offset > 0 ? offset + 1 : offset ; break;
+			case 'q' : endwin(); exit(0);
 			case 'l' : skip = 1; return;
+				   // le skip ne fonctionnera pas hors pause
+				   // tant que manage input ne sera pas sur un
+				   // autre thread qui pourra tuer le sleep dès
+				   // qu'il y a un input pressé
 			default: break;
 		}
 		if(pause_){ 
 			redraw();
-			msleep(20);
 			refresh();
+			msleep(20);
 		}
 	} while(pause_);
+	redraw();
+	refresh();
 }
 
 void display(char *s, double add){
@@ -156,13 +167,10 @@ void display(char *s, double add){
 	add_str(s, n, add*SPEED);
 	float n2 = ((float)n)/10 > 1 ? ((float)n)/10 : 1;
 	redraw();
-	manage_input();	
-	refresh();
 	SPEED = 60000/WPM;
-	if(!skip){
-		msleep((long)(SPEED*n2 + tab[1]->time));
-	}
-	skip = 0;
+	refresh();
+	manage_input();	
+	msleep((1-skip)*(long)(SPEED*n2 + tab[1]->time));
 }
 
 void sig_handler(int signum){
