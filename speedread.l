@@ -51,7 +51,8 @@ int main(int argc, char *argv[])
 	SPEED = 60000/WPM;
 	if (optind >= argc) {
 		// transform sdtin to a file
-		yyin = fdopen(dup(fileno(stdin)), "r");
+		FILE *sdtinFile = fdopen(dup(fileno(stdin)), "r");
+		yyin = sdtinFile;
 		// reopen stdin on the terminal (assuming stdout is still connected to the terminal)
 		freopen(ttyname(fileno(stdout)), "r", stdin);
 	}
@@ -73,6 +74,8 @@ int main(int argc, char *argv[])
 	yylex(); // launch file analyze
 	display("", 0);
 	extern int count;
+	nodelay(stdscr, FALSE); // do not wait for user input
+	getch();
 	endwin();
 	printf("Words read: %d\n", count);
 	exit(0);

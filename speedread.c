@@ -98,6 +98,11 @@ void display_tab(){
 	int lim = w/2 - tab[0]->size - midword - 1;
 	if(lim < 0){
 		while(lim < 0){
+			msleep(20);
+			clear();
+			move(h/2 - offset + 1, 0);
+			printw("Terminal is too narrow");
+			refresh();
 			getmaxyx(stdscr, h, w);
 			lim = w/2 - tab[0]->size - midword - 1;
 		}
@@ -171,6 +176,7 @@ void display(char *s, double add){
 	refresh();
 	manage_input();	
 	msleep((1-skip)*(long)(SPEED*n2 + tab[1]->time));
+	manage_input();	
 }
 
 void sig_handler(int signum){
@@ -197,4 +203,3 @@ void switch_colors(char *c){
 				    exit(1);
 	}
 }
-
