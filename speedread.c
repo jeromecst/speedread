@@ -125,11 +125,8 @@ void redraw(){
 	display_tab();
 	getmaxyx(stdscr, h, w);
 	move(h-1,1);
-	attron(A_NORMAL);
-	if(pause_)
-		printw("WPM: %d | WORDS: %d | PAUSED", WPM, count);
-	else
-		printw("WPM: %d | WORDS: %d", WPM, count);
+	printw("WPM: %d | WORDS: %d", WPM, count);
+	if(pause_) printw(" | PAUSED");
 }
 
 void manage_input(){
@@ -147,7 +144,7 @@ void manage_input(){
 			case 'k' : WPM += 10; break;
 			case 'J' : offset = h/2 - offset < h - 3 ? offset - 1 : offset; break;
 			case 'K' : offset = h/2 - offset > 0 ? offset + 1 : offset ; break;
-			case 'q' : endwin(); exit(0);
+			case 'q' : endwin(); printf("Words read: %d\n", count); exit(0);
 			case 'l' : skip = 1; return;
 				   // le skip ne fonctionnera pas hors pause
 				   // tant que manage input ne sera pas sur un
