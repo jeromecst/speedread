@@ -10,12 +10,17 @@ int SPEED = 0;
 int pos = -1;
 %}
 
-WORD [^ \n\t!\?,:\.0-9]+
-NUMBER [^ \n\t!\?,:\.]+
-POINT [!\?,:]+
+WORD [^ \n\t\r!\?,:\.0-9]+
+NUMBER [^ \n\t\r!\?,:\.]+
+NOSPACE [^\t\r\n]+
+ADRESS (https?:\/\/)+{NOSPACE}\.{NOSPACE}
+POINT [!\?,:(\.\.\.)]+
+URL {ADRESS}(({NOSPACE}\/)+({NOSPACE})?)?({POINT})?
 
 %%
 
+{URL}					display("<matched_url>", 1);
+\.\.\.(\.)+					
 "..."|"[...]"				display(yytext, 1);
 ({WORD}|{NUMBER})" "?\.{WORD}?		display(yytext, 1); 
 ({WORD}|{NUMBER})" "?{POINT}{WORD}?	display(yytext, .85); 
