@@ -7,27 +7,27 @@
 #include <locale.h>
 int WPM = 350;
 int SPEED = 0;
-int pos = -1;
+int position_to_go = -1;
 %}
 
 WORD [^ \n\t\r!\?,:\.0-9]+
-NUMBER [^ \n\t\r!\?,:\.]+
+NUMBER [^ \n\t\r!\?:]+
 NOSPACE [^\t\r\n]+
 ADRESS (https?:\/\/)+{NOSPACE}\.{NOSPACE}
-POINT [!\?,:(\.\.\.)]+
+POINT ("... "|[!\?,:])
 URL {ADRESS}(({NOSPACE}\/)+({NOSPACE})?)?({POINT})?
 
 %%
 
-{URL}					display("<matched_url>", 1);
-\.\.\.(\.)+					
-"..."|"[...]"				display(yytext, 1);
-({WORD}|{NUMBER})" "?\.{WORD}?		display(yytext, 1); 
-({WORD}|{NUMBER})" "?{POINT}{WORD}?	display(yytext, .85); 
-{WORD}					display(yytext, 0);
-{NUMBER}				display(yytext, .2);
+"..."\.+				read_word(".....", 1);
+{URL}					read_word("<matched_url>", 1);
+"..."|"[...]"				read_word(yytext, 1);
+({WORD}|{NUMBER})" "?\.{WORD}?		read_word(yytext, 1); 
+({WORD}|{NUMBER})" "?{POINT}{WORD}?	read_word(yytext, .85); 
+{WORD}					read_word(yytext, 0);
+{NUMBER}				read_word(yytext, .2);
 [ \t\n]+
-. 					display(yytext, 0);
+. 					read_word(yytext, 0);
 
 %%
 
@@ -42,14 +42,14 @@ int main(int argc, char *argv[])
 				WPM = atoi(optarg);
 				break;
 			case 'p':
-				pos = atoi(optarg);
+				position_to_go = atoi(optarg);
 				break;
 			case 'c':
 				strcopy(optarg, color);
 				break;
 			case 'h':
 			default: 
-				fprintf(stderr, "Usage: %s [-w wpm] [-c color] [-n num] [-p pos] [-h] file\n", argv[0]);
+				fprintf(stderr, "Usage: %s [-w wpm] [-c color] [-n num] [-p position_to_go] [-h] file\n", argv[0]);
 				exit(EXIT_FAILURE);
 		}
 	}
@@ -77,11 +77,11 @@ int main(int argc, char *argv[])
 	nodelay(stdscr, TRUE); // do not wait for user input
 	keypad(stdscr, TRUE); // allow arrow keys
 	yylex(); // launch file analyze
-	display("", 0);
-	extern int count;
+	read_word("", 0);
+	extern int word_count;
 	nodelay(stdscr, FALSE); // do not wait for user input
 	getch();
 	endwin();
-	printf("Words read: %d\n", count);
+	printf("Words read: %d\n", word_count);
 	exit(0);
 }
