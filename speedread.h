@@ -1,4 +1,5 @@
 #include "utf8.h"
+#include <pthread.h>
 
 #define SIZE 100
 
@@ -19,5 +20,5 @@ void read_word(char *word, double time_add);
 void sig_handler(int signum);
 const unsigned long hash(const char *str);
 void switch_colors(char *c);
-void manage_input();
+void *manage_input();
 void add_str(char *str, unsigned str_size, unsigned add);

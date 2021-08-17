@@ -18,7 +18,6 @@ extern char color[];
 int word_count = 0;
 int offset = 3;
 int pause_ = 0;
-int skip = 0;
 float speed_ratio = 1;
 
 int msleep(unsigned long msec) {
@@ -113,49 +112,37 @@ void read_word(char *word, double time_add){
 	draw();
 	SPEED = 60000/WPM;
 	refresh();
-	manage_input();
 	speed_ratio = ((float)strlen)/10 > 1 ? ((float)strlen)/10 : 1;
-	msleep((1-skip)*(long)(SPEED*speed_ratio + word_tab[1]->time));
-	manage_input();
+	msleep((long)(SPEED*speed_ratio + word_tab[1]->time));
+	while(pause_){
+		msleep(20);
+	}
 }
 
 
-void manage_input(){
+void *manage_input(){
 	int h, w;
-	skip = 0;
-	do{
-		getmaxyx(stdscr, h, w);
-		// h et l pour parcourir le word_tableau
+	while (1){
+		msleep(20);
+		// h et l pour parcourir le word_tableau (pas encore implémenté)
 		// j et k pour changer le wpm
 		int ch;
 		ch = getch();
 		switch (ch){
-			case ' ' : pause_ = !pause_; break;
-			case 'j' : WPM = WPM > 10 ? WPM - 10 : WPM ; break;
-			case 'k' : WPM += 10; break;
-			case 'J' : offset = h/2 - offset < h - 3 ? offset - 1 : offset; break;
-			case 'K' : offset = h/2 - offset > 0 ? offset + 1 : offset ; break;
+			case ' ' : pause_ = !pause_; draw(); break;
+			case 'j' : WPM = WPM > 10 ? WPM - 10 : WPM; draw(); break;
+			case 'k' : WPM += 10; draw(); break;
+			case 'J' :getmaxyx(stdscr, h, w); offset = h/2 - offset < h - 3 ? offset - 1 : offset; draw(); break;
+			case 'K' :getmaxyx(stdscr, h, w); offset = h/2 - offset > 0 ? offset + 1 : offset; draw(); break;
 			case 'q' : endwin(); printf("Words read: %d\n", word_count); exit(0);
-			case 'l' : skip = 1; return;
-				   // le skip ne fonctionnera pas hors pause
-				   // tant que manage input ne sera pas sur un
-				   // autre thread qui pourra tuer le sleep dès
-				   // qu'il y a un input pressé
 			default: break;
 		}
-		if(pause_){ 
-			draw();
-			refresh();
-			msleep(20);
-		}
-	} while(pause_);
-	draw();
-	refresh();
+	}
 }
 
 void sig_handler(int signum){
 	endwin();
-	printf("\nRestore with speedread -p %d\n", word_count);
+	printf("Restore with speedread -p %d\n", word_count);
 	exit(0);
 }
 
