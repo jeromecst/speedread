@@ -33,6 +33,8 @@ URL {ADRESS}(({NOSPACE}\/)+({NOSPACE})?)?({POINT})?
 
 int main(int argc, char *argv[])
 {
+	signal(SIGINT,sig_handler);
+	pthread_t thread_input;
 	int opt;
 	char color[20];
 	strcopy("green", color); //default color is green
@@ -76,6 +78,7 @@ int main(int argc, char *argv[])
 	noecho(); // do not write char to terminal
 	nodelay(stdscr, TRUE); // do not wait for user input
 	keypad(stdscr, TRUE); // allow arrow keys
+	pthread_create(&thread_input, NULL, manage_input, NULL);
 	yylex(); // launch file analyze
 	read_word("", 0);
 	extern int word_count;
