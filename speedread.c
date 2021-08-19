@@ -18,6 +18,7 @@ extern char color[];
 int word_count = 0;
 int offset = 3;
 int pause_ = 0;
+int draw_screen = 1;
 float speed_ratio = 1;
 
 int msleep(unsigned long msec) {
@@ -67,17 +68,6 @@ void display_cursor(int h, int w){
 void display_word_tab(int h, int w){
 	unsigned midword = word_tab[1]->size > 13 ? 4 : mid[word_tab[1]->size];
 	int lim_size = w/2 - word_tab[0]->size - midword - 1;
-	if(lim_size < 0){
-		while(lim_size < 0){
-			msleep(20);
-			clear();
-			move(h/2 - offset + 1, 0);
-			printw("Terminal is too narrow");
-			refresh();
-			getmaxyx(stdscr, h, w);
-			lim_size = w/2 - word_tab[0]->size - midword - 1;
-		}
-	}
 	move(h/2 - offset + 1, lim_size);
 	for(int i = 0; i < 3; i++){
 		if(i == 1) display_word(word_tab[i]->w, &midword);
@@ -109,11 +99,9 @@ void read_word(char *word, double time_add){
 	if(position_to_go > -1 && word_count < position_to_go) return;
 	unsigned strlen  = u8_strlen(word);
 	add_str(word, strlen, time_add*SPEED);
-	draw();
-	SPEED = 60000/WPM;
-	refresh();
 	speed_ratio = ((float)strlen)/10 > 1 ? ((float)strlen)/10 : 1;
-	msleep((long)(SPEED*speed_ratio + word_tab[1]->time));
+	draw_screen = 1;
+	msleep((long)((60000/WPM)*speed_ratio + word_tab[1]->time));
 	while(pause_){
 		msleep(20);
 	}
@@ -123,20 +111,22 @@ void read_word(char *word, double time_add){
 void *manage_input(){
 	int h, w;
 	while (1){
-		msleep(20);
+		msleep(10);
 		// h et l pour parcourir le word_tableau (pas encore implémenté)
 		// j et k pour changer le wpm
 		int ch;
 		ch = getch();
 		switch (ch){
-			case ' ' : pause_ = !pause_; draw(); break;
-			case 'j' : WPM = WPM > 10 ? WPM - 10 : WPM; draw(); break;
+			case ' ' : pause_ = !pause_; draw_screen = 1; break;
+			case 'j' : WPM = WPM > 10 ? WPM - 10 : WPM; draw_screen = 1; break;
 			case 'k' : WPM += 10; draw(); break;
-			case 'J' :getmaxyx(stdscr, h, w); offset = h/2 - offset < h - 3 ? offset - 1 : offset; draw(); break;
-			case 'K' :getmaxyx(stdscr, h, w); offset = h/2 - offset > 0 ? offset + 1 : offset; draw(); break;
+			case 'J' :getmaxyx(stdscr, h, w); offset = h/2 - offset < h - 3 ? offset - 1 : offset; draw_screen = 1; break;
+			case 'K' :getmaxyx(stdscr, h, w); offset = h/2 - offset > 0 ? offset + 1 : offset; draw_screen = 1; break;
 			case 'q' : endwin(); printf("Words read: %d\n", word_count); exit(0);
 			default: break;
 		}
+		if (draw_screen == 1) draw();
+		draw_screen = 0;
 	}
 }
 
