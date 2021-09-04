@@ -16,7 +16,7 @@ options:
 	@echo "CC      = $(CC)"
 
 lex.yy.c:
-	${FLEX} speedread.l
+	${FLEX} speedread.l lex.yy.c
 
 .c.o:
 	${CC} -c ${CFLAGS} $<
