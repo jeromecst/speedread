@@ -5,6 +5,9 @@
 #include <signal.h>
 #include <ncurses.h>
 #include <locale.h>
+#include "utf8.h"
+#include <pthread.h>
+
 int WPM = 350;
 int SPEED = 0;
 int position_to_go = -1;

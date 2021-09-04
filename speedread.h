@@ -1,6 +1,3 @@
-#include "utf8.h"
-#include <pthread.h>
-
 #define SIZE 100
 
 struct Word {
