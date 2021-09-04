@@ -6,6 +6,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include "speedread.h"
+// ʌ ← maybe use this char as well
 
 #define LISTCOLORS " - black\n - blue\n - green\n - cyan\n - red\n - magenta\n - yellow\n - white\n"
 
