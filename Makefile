@@ -1,12 +1,28 @@
-all: 
-	lex speedread.l 
-	gcc lex.yy.c utf8.c speedread.c -lncurses -lpthread -o speedread
+# speedread - cli speedreader
+# See LICENSE file for copyright and license details.
+.POSIX:
 
-install: all
-	install -m 755 speedread /usr/local/bin/speedread
+include config.mk
 
-uninstall:
-	rm /usr/local/bin/speedread
+SRC = speedread.c utf8.c lex.yy.c
+OBJ = $(SRC:.c=.o)
+
+all: options lex.yy.c speedread
+
+options:
+	@echo speedread build options:
+	@echo "CFLAGS  = $(STCFLAGS)"
+	@echo "LDFLAGS = $(STLDFLAGS)"
+	@echo "CC      = $(CC)"
+
+lex.yy.c:
+	${FLEX} speedread.l
+
+.c.o:
+	${CC} -c ${CFLAGS} $<
+
+speedread:	${OBJ}
+	${CC} -o $@ ${OBJ} ${STLDFLAGS}
 
 clean:
-	rm speedread
+	rm -f lex.yy.c ${OBJ} speedread
