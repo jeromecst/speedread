@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 	cbreak(); // one char at a time input
 	noecho(); // do not write char to terminal
 	nodelay(stdscr, TRUE); // do not wait for user input
-	keypad(stdscr, TRUE); // allow arrow keys
+	//keypad(stdscr, TRUE); // allow arrow keys
 	pthread_create(&thread_input, NULL, manage_input, NULL);
 	yylex(); // launch file analyze
 	read_word("", 0);
