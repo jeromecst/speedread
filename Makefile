@@ -7,7 +7,7 @@ include config.mk
 SRC = speedread.c utf8.c lex.yy.c
 OBJ = $(SRC:.c=.o)
 
-all: options lex.yy.c speedread
+all: options speedread
 
 options:
 	@echo speedread build options:
@@ -21,8 +21,11 @@ lex.yy.c:
 .c.o:
 	${CC} -c ${CFLAGS} $<
 
-speedread:	${OBJ}
+speedread:	lex.yy.c ${OBJ}
 	${CC} -o $@ ${OBJ} ${STLDFLAGS}
+
+install: speedread
+	install -m 755 speedread ${PREFIX}/bin/speedread
 
 clean:
 	rm -f lex.yy.c ${OBJ} speedread
