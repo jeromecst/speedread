@@ -110,7 +110,7 @@ void read_word(char *word, double time_add){
 
 
 void *manage_input(){
-	int h, w;
+	int h;
 	while (1){
 		msleep(10);
 		// h et l pour parcourir le word_tableau (pas encore implémenté)
@@ -121,8 +121,8 @@ void *manage_input(){
 			case ' ' : pause_ = !pause_; draw_screen = 1; break;
 			case 'j' : WPM = WPM > 10 ? WPM - 10 : WPM; draw_screen = 1; break;
 			case 'k' : WPM += 10; draw(); break;
-			case 'J' :getmaxyx(stdscr, h, w); offset = h/2 - offset < h - 3 ? offset - 1 : offset; draw_screen = 1; break;
-			case 'K' :getmaxyx(stdscr, h, w); offset = h/2 - offset > 0 ? offset + 1 : offset; draw_screen = 1; break;
+			case 'J' : h = getmaxx(stdscr); offset = h/2 - offset < h - 3 ? offset - 1 : offset; draw_screen = 1; break;
+			case 'K' : h = getmaxx(stdscr); offset = h/2 - offset > 0 ? offset + 1 : offset; draw_screen = 1; break;
 			case 'q' : endwin(); printf("Words read: %d\n", word_count); exit(0);
 			default: break;
 		}

@@ -10,10 +10,11 @@ LIBS = -lpthread \
        `$(PKG_CONFIG) --libs ncursesw`
 
 # flags
-STLDFLAGS = $(LIBS)
+LDFLAGS = $(LIBS)
+CFLAGS = $(INCS) $(STCPPFLAGS) $(CPPFLAGS)
 
 # compiler and linker
-CC = gcc
+#CC = gcc
 FLEX = lex
 # uncomment if runing debian based distro
 #FLEX = flex
