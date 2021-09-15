@@ -1,6 +1,5 @@
 # speedread - cli speedreader
 # See LICENSE file for copyright and license details.
-.POSIX:
 
 include config.mk
 
@@ -11,21 +10,23 @@ all: options speedread
 
 options:
 	@echo speedread build options:
-	@echo "CFLAGS  = $(STCFLAGS)"
-	@echo "LDFLAGS = $(STLDFLAGS)"
+	@echo "CFLAGS  = $(CFLAGS)"
+	@echo "LDFLAGS = $(LDFLAGS)"
 	@echo "CC      = $(CC)"
 
-lex.yy.c:
+lex.yy.c: speedread.l
 	${FLEX} speedread.l lex.yy.c
 
 .c.o:
-	${CC} -c ${CFLAGS} $<
+	${CC} -Wall -c ${CFLAGS} $<
 
 speedread:	lex.yy.c ${OBJ}
-	${CC} -o $@ ${OBJ} ${STLDFLAGS}
+	${CC} -o $@ ${OBJ} ${LDFLAGS}
 
 install: speedread
 	install -m 755 speedread ${PREFIX}/bin/speedread
 
 clean:
 	rm -f lex.yy.c ${OBJ} speedread
+
+.PHONY: all options speedread install clean
