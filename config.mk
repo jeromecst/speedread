@@ -14,7 +14,5 @@ LDFLAGS = $(LIBS)
 CFLAGS = $(INCS) $(STCPPFLAGS) $(CPPFLAGS)
 
 # compiler and linker
-#CC = gcc
-FLEX = lex
-# uncomment if runing debian based distro
-#FLEX = flex
+CC = gcc
+FLEX = flex

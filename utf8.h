@@ -1,3 +1,5 @@
+#ifndef UTF8
+#define UTF8
 #include <stdarg.h>
 
 /* is c the start of a utf8 sequence? */
@@ -73,3 +75,5 @@ int u8_printf(char *fmt, ...);
 void strcopy(char *a, char *b);
 const unsigned long hash(const char *str);
 unsigned len(char *s);
+
+#endif
