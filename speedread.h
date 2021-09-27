@@ -1,3 +1,5 @@
+#ifndef SPEEDREAD
+#define SPEEDREAD
 #define SIZE 100
 
 struct Word {
@@ -19,3 +21,5 @@ const unsigned long hash(const char *str);
 void switch_colors(char *c);
 void *manage_input();
 void add_str(char *str, unsigned str_size, unsigned add);
+
+#endif
