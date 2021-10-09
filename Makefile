@@ -17,7 +17,7 @@ options:
 %.l.c: %.l
 	${FLEX} -o $@ $< $@
 
-%.c : %.o
+.c.o:
 	${CC} -Wall -c ${CFLAGS} $<
 
 speedread:	${OBJ} 

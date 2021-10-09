@@ -36,7 +36,7 @@ URL {ADRESS}(({NOSPACE}\/)+({NOSPACE})?)?({POINT})?
 
 int main(int argc, char *argv[])
 {
-	signal(SIGINT,sig_handler);
+	signal(SIGINT,end_);
 	pthread_t thread_input;
 	int opt;
 	char color[20];
