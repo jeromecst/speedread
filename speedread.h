@@ -16,7 +16,7 @@ void display_cursor();
 void display_tab();
 void get_mid_screen();
 void read_word(char *word, double time_add);
-void sig_handler(int signum);
+void end_(int sig);
 const unsigned long hash(const char *str);
 void switch_colors(char *c);
 void *manage_input();

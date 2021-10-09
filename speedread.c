@@ -6,6 +6,7 @@
 #include "speedread.h"
 #include "utf8.h"
 #include <pthread.h>
+#include <stdatomic.h>
 // ʌ ← maybe use this char as well
 
 #define LISTCOLORS " - black\n - blue\n - green\n - cyan\n - red\n - magenta\n - yellow\n - white\n"
@@ -19,7 +20,7 @@ extern char color[];
 int word_count = 0;
 int offset = 3;
 int pause_ = 0;
-int draw_screen = 1;
+atomic_int draw_screen = 1;
 float speed_ratio = 1;
 
 int msleep(unsigned long msec) {
@@ -131,7 +132,7 @@ void *manage_input(){
 	}
 }
 
-void sig_handler(int signum){
+void end_(int sig){
 	endwin();
 	printf("Restore with speedread -p %d\n", word_count);
 	exit(0);
