@@ -103,7 +103,7 @@ void read_word(char *word, double time_add){
 	add_str(word, strlen, time_add*SPEED);
 	speed_ratio = ((float)strlen)/10 > 1 ? ((float)strlen)/10 : 1;
 	draw_screen = 1;
-	msleep((long)((60000/WPM)*speed_ratio + word_tab[1]->time));
+	msleep((long)((60000./WPM)*speed_ratio + word_tab[1]->time));
 	while(pause_){
 		msleep(20);
 	}
