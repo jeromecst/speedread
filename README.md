@@ -1,4 +1,6 @@
 # USAGE
+
+[![asciicast](https://asciinema.org/a/453696.svg)](https://asciinema.org/a/453696)
 ```
 speedread [-w wpm] [-c color] [-n num] [-p pos] [-h] file
 ```
