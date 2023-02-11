@@ -1,11 +1,12 @@
 %option noyywrap
 
 %{
+#include "utils.h"
 #include "speedread.h"
 #include <signal.h>
 #include <ncurses.h>
 #include <locale.h>
-#include "utf8.h"
+#include <string.h>
 #include <pthread.h>
 
 int WPM = 350;
@@ -25,8 +26,8 @@ URL {ADRESS}(({NOSPACE}\/)+({NOSPACE})?)?({POINT})?
 "..."\.+				read_word(".....", 1);
 {URL}					read_word("<matched_url>", 1);
 "..."|"[...]"				read_word(yytext, 1);
-({WORD}|{NUMBER})" "?\.{WORD}?		read_word(yytext, 1); 
-({WORD}|{NUMBER})" "?{POINT}{WORD}?	read_word(yytext, .85); 
+({WORD}|{NUMBER})" "?\.{WORD}?		read_word(yytext, 1);
+({WORD}|{NUMBER})" "?{POINT}{WORD}?	read_word(yytext, .85);
 {WORD}					read_word(yytext, 0);
 {NUMBER}				read_word(yytext, .2);
 [ \t\n]+
@@ -40,7 +41,7 @@ int main(int argc, char *argv[])
 	pthread_t thread_input;
 	int opt;
 	char color[20];
-	strcopy("green", color); //default color is green
+	strcpy(color, "green"); //default color is green
 	while ((opt = getopt(argc, argv, "w:c:p:h")) != -1) {
 		switch (opt) {
 			case 'w':
@@ -50,10 +51,10 @@ int main(int argc, char *argv[])
 				position_to_go = atoi(optarg);
 				break;
 			case 'c':
-				strcopy(optarg, color);
+				strcpy(color, optarg);
 				break;
 			case 'h':
-			default: 
+			default:
 				fprintf(stderr, "Usage: %s [-w wpm] [-c color] [-n num] [-p position_to_go] [-h] file\n", argv[0]);
 				exit(EXIT_FAILURE);
 		}
@@ -68,7 +69,7 @@ int main(int argc, char *argv[])
 	}
 	else yyin = fopen(argv[optind], "r");
 	setlocale(LC_ALL, "");
-	initscr(); // window initialization 
+	initscr(); // window initialization
 	curs_set(0); // hide cursor
 	if (has_colors()){
 		start_color();

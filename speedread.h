@@ -17,7 +17,6 @@ void display_tab();
 void get_mid_screen();
 void read_word(char *word, double time_add);
 void end_(int sig);
-const unsigned long hash(const char *str);
 void switch_colors(char *c);
 void *manage_input();
 void add_str(char *str, unsigned str_size, unsigned add);
