@@ -1,3 +1,4 @@
+#include "utils.h"
 #include <errno.h>
 #include <pthread.h>
 
@@ -12,16 +13,26 @@ unsigned long hash(const char *str) {
 
 int u8_seqlen(char *s) {
 	unsigned char c = s[0];
-	if (c <= 0xBF) {
+	if ((c >> 7) == 0x0) {
 		return 1;
-	} else if (c <= 0xCF) {
+	} else if ((c >> 5) == 0x6) {
 		return 2;
-	} else if (c <= 0xDF) {
+	} else if ((c >> 4) == 0xE) {
 		return 3;
-	} else if (c <= 0xFC) {
+	} else if ((c >> 3) == 0x1E) {
 		return 4;
 	}
 	return -1;
+}
+
+unsigned int u8_charlen(char *s) {
+	unsigned int len = 0;
+	int i = 0;
+	while (s[i] != '\0') {
+		i += u8_seqlen(&s[i]);
+		len++;
+	}
+	return len;
 }
 
 int msleep(unsigned long msec) {

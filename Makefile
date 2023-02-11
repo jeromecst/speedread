@@ -3,7 +3,7 @@
 
 include config.mk
 
-SRC = speedread.c utf8.c speedread.l.c
+SRC = speedread.c utils.c speedread.l.c
 OBJ = $(SRC:.c=.o)
 
 all: options speedread
@@ -20,7 +20,7 @@ options:
 .c.o:
 	${CC} -Wall -c ${CFLAGS} $<
 
-speedread:	${OBJ} 
+speedread:	${OBJ}
 	${CC} -o $@ ${OBJ} ${LDFLAGS}
 
 install: speedread
@@ -28,6 +28,3 @@ install: speedread
 
 clean:
 	rm -f ${OBJ} speedread
-
-speedread.c:;
-utf8.c:;

@@ -32,14 +32,16 @@ void display_word(char *word, unsigned *midword) {
 	char unicode_char[4];
 	for (int i = 0; i < strlen(word);) {
 		seq_len = u8_seqlen(&word[i]);
-		memset(unicode_char, 0, 4);
-		memcpy(unicode_char, &word[i], seq_len);
-		if (char_index != *midword)
-			printw("%s", unicode_char);
-		else {
-			attron(COLOR_PAIR(2));
-			printw("%s", unicode_char);
-			attron(COLOR_PAIR(1));
+		if (seq_len > 0) {
+			memset(unicode_char, 0, 4);
+			memcpy(unicode_char, &word[i], seq_len);
+			if (char_index != *midword)
+				printw("%s", unicode_char);
+			else {
+				attron(COLOR_PAIR(2));
+				printw("%s", unicode_char);
+				attron(COLOR_PAIR(1));
+			}
 		}
 		i += seq_len;
 		char_index++;
@@ -88,7 +90,7 @@ void read_word(char *word, double time_add) {
 	word_count++;
 	if (position_to_go > -1 && word_count < position_to_go)
 		return;
-	unsigned int len = strlen(word);
+	unsigned int len = u8_charlen(word);
 	add_str(word, len, time_add * SPEED);
 	speed_ratio = ((float)len) / 10 > 1 ? ((float)len) / 10 : 1;
 	draw_screen = 1;
