@@ -5,6 +5,7 @@
 #include <signal.h>
 #include "speedread.h"
 #include "utf8.h"
+#include <string.h>
 #include <pthread.h>
 #include <stdatomic.h>
 // ʌ ← maybe use this char as well
@@ -39,24 +40,21 @@ int msleep(unsigned long msec) {
 
 void display_word(char *word, unsigned *midword){
 	attron(A_BOLD);
-	int char_size;
-	int tab_size = 0;
+	unsigned int seq_len;
+	int char_index = 0;
 	char unicode_char[4];
 	for(int i = 0; i < len(word); ){
-		char_size = u8_seqlen(&word[i]);
-		// create a string containg a unicode character
-		for(int k = 0; k < 4; k++){
-			if(k < char_size) unicode_char[k] = word[i+k];
-			else unicode_char[k] = '\0';
-		}
-		if(tab_size != *midword) printw("%s", unicode_char);
+		seq_len = u8_seqlen(&word[i]);
+		memset(unicode_char, 0, 4);
+		memcpy(unicode_char, &word[i], seq_len);
+		if(char_index != *midword) printw("%s", unicode_char);
 		else{
 			attron(COLOR_PAIR(2));
-			printw("%s", unicode_char); 
+			printw("%s", unicode_char);
 			attron(COLOR_PAIR(1));
 		}
-		i += char_size;
-		tab_size++;
+		i += seq_len;
+		char_index++;
 	}
 	printw(" ");
 	attroff(A_BOLD);
@@ -73,7 +71,7 @@ void display_word_tab(int h, int w){
 	move(h/2 - offset + 1, lim_size);
 	for(int i = 0; i < 3; i++){
 		if(i == 1) display_word(word_tab[i]->w, &midword);
-		else{ 
+		else{
 			attron(COLOR_PAIR(3));
 			printw("%s ", word_tab[i]->w);
 			attron(COLOR_PAIR(1));
@@ -148,7 +146,7 @@ void switch_colors(char *c){
 		case(6953915280413): init_pair(2, COLOR_MAGENTA, -1); break; // magenta
 		case(6954248304353): init_pair(2, COLOR_YELLOW, -1); break; // yellow
 		case(210732530054): init_pair(2, COLOR_WHITE, -1); break; // white
-		default: 
+		default:
 				    endwin();
 				    printf("unrecognized color\n");
 				    printf("availaibled are\n");
@@ -172,7 +170,7 @@ void add_str(char *str, unsigned str_size, unsigned add){
 		strcopy(word_tab[i]->w, stmp);
 		strcopy(stmp2, word_tab[i]->w);
 		strcopy(stmp, stmp2);
-		 
+
 		tmpsize = word_tab[i]->size;
 		word_tab[i]->size = tmpsize2;
 		tmpsize2 = tmpsize;
